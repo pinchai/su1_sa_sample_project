@@ -87,7 +87,7 @@
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-users"></i>
-                            <p>Users</p>
+                            <p>Users 123123</p>
                         </a>
                     </li>
 
