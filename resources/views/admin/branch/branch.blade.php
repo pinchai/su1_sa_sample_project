@@ -17,8 +17,21 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
+                         <center>
+                             <img
+                                 style="width: 200px; height: 200px; border-radius: 10px"
+                                 id="image_preview"
+                                 alt="your image"
+                             />
+                         </center>
                         <label for="file">Logo</label>
-                        <input type="file" id="file" class="form-control">
+                        <input
+                            @change="handleFileUpload"
+                            type="file"
+                            id="file"
+                            class="form-control"
+                            onchange="document.getElementById('image_preview').src = window.URL.createObjectURL(this.files[0])"
+                        >
                     </div>
                     <div class="form-group">
                         <label for="name">Name</label>
@@ -116,7 +129,20 @@
                                         :key="'branch_list_'+index"
                                     >
                                         <td>[[ index+1 ]]</td>
-                                        <td>logo.png</td>
+                                        <td>
+                                            <img
+                                                v-if="item.logo !== null"
+                                                style="width: 80px; border-radius: 10px"
+                                                :src="'{{ asset('/images/') }}'+'/'+item.logo"
+                                                onerror="this.src='/image_error.png';"
+                                            >
+
+                                            <img
+                                                v-else
+                                                style="width: 80px; border-radius: 10px"
+                                                src="/no-image.png"
+                                            >
+                                        </td>
                                         <td>[[ item.name ]]</td>
                                         <td>[[ item.phone ]]</td>
                                         <td>[[ item.location ]]</td>
@@ -161,7 +187,8 @@
                         name: null,
                         phone: null,
                         location: null,
-                        description: null
+                        description: null,
+                        image: null
                     }
                 }
             },
@@ -169,6 +196,9 @@
                 this.fetchApi()
             },
             methods: {
+                handleFileUpload(event) {
+                    this.form.image = event.target.files[0];
+                },
                 fetchApi() {
                     $.LoadingOverlay("show");
                     let vm = this
@@ -189,7 +219,15 @@
                     $.LoadingOverlay("show");
                     let vm = this
                     let input = vm.form
-                    axios.post('{{ route('create_branch') }}', input)
+                    const formData = new FormData();
+                    formData.append('id', input.id);
+                    formData.append('name', input.name);
+                    formData.append('phone', input.phone);
+                    formData.append('location', input.location);
+                    formData.append('description', input.description);
+                    formData.append('image', input.image);
+
+                    axios.post('{{ route('create_branch') }}', formData)
                         .then(function (response) {
                             // handle success
                             vm.clearForm()
@@ -241,6 +279,11 @@
                     this.form.phone = item.phone
                     this.form.location = item.location
                     this.form.description = item.description
+                    if (item.logo == null){
+                        document.getElementById('image_preview').src = `{{ asset('/no-image.png') }}`
+                    }else {
+                        document.getElementById('image_preview').src = `{{ asset('images') }}/${item.logo}`
+                    }
                     $('#staticBackdrop').modal('show')
                 },
                 update() {

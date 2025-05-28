@@ -25,11 +25,19 @@ class BranchController extends Controller
 
     function create(Request $request)
     {
+        $image = $request->file('image');
+        $imageName = null;
+        if ($image){
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images'), $imageName);
+        }
+
         $branch = new Branch();
         $branch->name = $request->name;
         $branch->phone = $request->phone;
         $branch->location = $request->location;
         $branch->description = $request->description;
+        $branch->logo = $imageName;
         $branch->save();
 
         return response()->json([
