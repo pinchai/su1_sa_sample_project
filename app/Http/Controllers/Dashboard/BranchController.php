@@ -65,7 +65,11 @@ class BranchController extends Controller
         $imageName = null;
         if ($request->image != $request->old_image) {
             $image = $request->file('image');
-            $imageName = $request->old_image;
+            if ($request->old_image == 'null'){
+                $imageName = time() . '_' . $image->getClientOriginalName();
+            }else{
+                $imageName = $request->old_image;
+            }
             if ($image) {
                 $image->move(public_path('images'), $imageName);
             }
