@@ -51,7 +51,14 @@ class BranchController extends Controller
         $id = $request->item['id'];
         $branch = Branch::find($id);
         if ($branch) {
+            $logo = 'images/'.$branch->logo;
             $branch->delete();
+            if ($branch->logo != null){
+                $imagePath = public_path($logo);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
         }
 
         return response()->json([
