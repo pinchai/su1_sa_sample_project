@@ -43,11 +43,11 @@
                     </div>
                     <div class="form-group">
                         <label for="location">Location</label>
-                        <textarea v-model="form.location" rows="3" id="location" class="form-control"></textarea>
+                        <textarea v-model="form.location" rows="2" id="location" class="form-control"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <textarea v-model="form.description" rows="5" id="description" class="form-control"></textarea>
+                        <textarea v-model="form.description" rows="3" id="description" class="form-control"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -279,6 +279,9 @@
                     this.form.phone = item.phone
                     this.form.location = item.location
                     this.form.description = item.description
+                    this.form.image = item.logo
+                    this.form.old_image = item.logo
+                    this.form.description = item.description
                     if (item.logo == null){
                         document.getElementById('image_preview').src = `{{ asset('/no-image.png') }}`
                     }else {
@@ -290,7 +293,15 @@
                     $.LoadingOverlay("show");
                     let vm = this
                     let input = this.form
-                    axios.post('{{ route('update_branch') }}', input)
+                    const formData = new FormData();
+                    formData.append('id', input.id);
+                    formData.append('name', input.name);
+                    formData.append('phone', input.phone);
+                    formData.append('location', input.location);
+                    formData.append('description', input.description);
+                    formData.append('image', input.image);
+                    formData.append('old_image', input.old_image);
+                    axios.post('{{ route('update_branch') }}', formData)
                         .then(function (response) {
                             // handle success
                             vm.clearForm()

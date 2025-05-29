@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function (){
-    return view('admin.master');
+    return redirect(route('dashboard'));
 });
 include 'admin/dashboard.php';
 include 'admin/branch.php';

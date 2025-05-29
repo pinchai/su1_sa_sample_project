@@ -27,7 +27,7 @@ class BranchController extends Controller
     {
         $image = $request->file('image');
         $imageName = null;
-        if ($image){
+        if ($image) {
             $imageName = time() . '_' . $image->getClientOriginalName();
             $image->move(public_path('images'), $imageName);
         }
@@ -46,12 +46,11 @@ class BranchController extends Controller
         ]);
     }
 
-
     function delete(Request $request)
     {
         $id = $request->item['id'];
         $branch = Branch::find($id);
-        if ($branch){
+        if ($branch) {
             $branch->delete();
         }
 
@@ -63,13 +62,24 @@ class BranchController extends Controller
 
     function update(Request $request)
     {
+        $imageName = null;
+        if ($request->image != $request->old_image) {
+            $image = $request->file('image');
+            $imageName = $request->old_image;
+            if ($image) {
+                $image->move(public_path('images'), $imageName);
+            }
+        }
         $branch = Branch::find($request->id);
 
-        if ($branch){
+        if ($branch) {
             $branch->name = $request->name;
             $branch->phone = $request->phone;
             $branch->location = $request->location;
             $branch->description = $request->description;
+            if ($imageName != null){
+                $branch->logo = $imageName;
+            }
             $branch->save();
         }
 
